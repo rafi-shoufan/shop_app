@@ -2,6 +2,7 @@ import 'package:advanced/presentation/resources/color_manager.dart';
 import 'package:advanced/presentation/resources/styles_manager.dart';
 import 'package:advanced/presentation/resources/values_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'font_manager.dart';
 
@@ -23,6 +24,10 @@ import 'font_manager.dart';
       /// app bar theme
       appBarTheme: AppBarTheme(
         color: ColorManager.primary,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light
+        ),
         elevation: AppSize.s14,
         shadowColor: ColorManager.lightPrimary,
         centerTitle: true,

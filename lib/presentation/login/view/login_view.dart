@@ -18,10 +18,10 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
 
   final LoginViewModel _loginViewModel = instance<LoginViewModel>();
-
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   _bind(){
     _loginViewModel.start();
     _userNameController.addListener(() { 
@@ -46,7 +46,6 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       backgroundColor: ColorManager.white,
       body: Container(
-
           padding: const EdgeInsets.only(top: AppPadding.p100),
           child: SingleChildScrollView(
             child: Form(
@@ -80,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
                       builder: (context, snapshot) {
                         return TextFormField(
                           keyboardType: TextInputType.visiblePassword,
-                          controller: _userNameController,
+                          controller: _passwordController,
                           decoration: InputDecoration(
                             hintText: AppStrings.password ,
                             labelText: AppStrings.password,

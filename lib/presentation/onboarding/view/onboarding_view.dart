@@ -52,10 +52,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         appBar: AppBar(
           backgroundColor: ColorManager.white,
           elevation: AppSize.s0,
-          systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: ColorManager.white,
-              statusBarBrightness: Brightness.dark
-          ),
+          // systemOverlayStyle:const SystemUiOverlayStyle(
+          //   //  statusBarColor: Colors.transparent,
+          //   //  statusBarBrightness: Brightness.dark
+          // ),
 
         ),
         body: PageView.builder(
@@ -101,7 +101,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: const EdgeInsets.all(AppPadding.p14),
+            padding: const EdgeInsets.all(AppPadding.p16),
             child: GestureDetector(
               onTap: (){
                 controller.animateToPage(
@@ -131,7 +131,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(AppPadding.p14),
+            padding: const EdgeInsets.all(AppPadding.p16),
             child: GestureDetector(
                 onTap: (){
                   controller.animateToPage(
