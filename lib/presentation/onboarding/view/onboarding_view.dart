@@ -3,10 +3,13 @@ import 'package:advanced/presentation/resources/color_manager.dart';
 import 'package:advanced/presentation/resources/routes_manager.dart';
 import 'package:advanced/presentation/resources/strings_manager.dart';
 import 'package:advanced/presentation/resources/values_manager.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../app/app_preferences.dart';
+import '../../../app/dependency_injection.dart';
 import '../../../domain/models/models.dart';
 import '../../resources/constants_manager.dart';
 import '../view_model/onboarding_view_model.dart';
@@ -22,8 +25,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   PageController controller = PageController();
   OnBoardingViewModel viewModel = OnBoardingViewModel();
+  final AppPreferences _appPreferences = instance<AppPreferences>();
+
 
   _bind(){
+    _appPreferences.setOnBoardingScreenViewed();
    viewModel.start();
   }
 
@@ -79,7 +85,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       Navigator.pushReplacementNamed(
                           context, Routes.loginRoute);
                     }, child: Text(
-                  AppStrings.skip,
+                  AppStrings.skip.tr(),
                   textAlign: TextAlign.end,
                   style: Theme
                       .of(context)

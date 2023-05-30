@@ -1,7 +1,11 @@
+import 'package:advanced/app/app_preferences.dart';
+import 'package:advanced/presentation/common/state_renderer/state_renderer_impl.dart';
 import 'package:advanced/presentation/resources/color_manager.dart';
 import 'package:advanced/presentation/resources/strings_manager.dart';
 import 'package:advanced/presentation/resources/values_manager.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../../../app/dependency_injection.dart';
 import '../../resources/assets_manager.dart';
@@ -21,13 +25,26 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final AppPreferences _appPreferences = instance<AppPreferences>();
+
 
   _bind(){
+    _appPreferences.setUserLoggedIn ();
     _loginViewModel.start();
     _userNameController.addListener(() { 
        _loginViewModel.setUserName(_userNameController.text);
     });
     _passwordController.addListener(() => _loginViewModel.setPassword(_passwordController.text));
+    _loginViewModel.userIsLoggedInStreamController.stream.listen((isLoggedIn) {
+      if(isLoggedIn){
+         /// بما انو عندي context وبدي أستخدم ال navigator ضمن ال stream controller لازم حط السطر التالي
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          /// navigate to main screen
+          _appPreferences.setUserLoggedIn();
+          Navigator.pushReplacementNamed(context, Routes.mainRoute);
+        });
+      }
+    });
   }
 
   @override
@@ -39,13 +56,23 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return _getContentWidget();
+    return Scaffold(
+      backgroundColor: ColorManager.white,
+      body: StreamBuilder<FlowState>(
+        stream: _loginViewModel.outputState,
+        builder: (context, snapshot) {
+            return snapshot.data?.getScreenWidget(context ,
+                _getContentWidget(),
+                    (){
+              _loginViewModel.login();
+                    })??_getContentWidget();
+         },
+      ),
+    );
   }
 
   _getContentWidget(){
-    return Scaffold(
-      backgroundColor: ColorManager.white,
-      body: Container(
+    return Container(
           padding: const EdgeInsets.only(top: AppPadding.p100),
           child: SingleChildScrollView(
             child: Form(
@@ -63,9 +90,9 @@ class _LoginViewState extends State<LoginView> {
                           keyboardType: TextInputType.emailAddress,
                         controller: _userNameController,
                         decoration: InputDecoration(
-                          hintText: AppStrings.username ,
-                          labelText: AppStrings.username,
-                          errorText: (snapshot.data??true)?null:AppStrings.usernameError,
+                          hintText: AppStrings.username.tr() ,
+                          labelText: AppStrings.username.tr(),
+                          errorText: (snapshot.data??true)?null:AppStrings.usernameError.tr(),
                         ),
                       );
                     },
@@ -81,9 +108,9 @@ class _LoginViewState extends State<LoginView> {
                           keyboardType: TextInputType.visiblePassword,
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            hintText: AppStrings.password ,
-                            labelText: AppStrings.password,
-                            errorText: (snapshot.data??true)?null:AppStrings.passwordError,
+                            hintText: AppStrings.password.tr() ,
+                            labelText: AppStrings.password.tr(),
+                            errorText: (snapshot.data??true)?null:AppStrings.passwordError.tr(),
                           ),
                         );
                       },
@@ -105,8 +132,8 @@ class _LoginViewState extends State<LoginView> {
                                   _loginViewModel.login();
                                 }
                                     :null,
-                              child: const Text(
-                                AppStrings.login
+                              child:  Text(
+                                AppStrings.login.tr()
                               )
                           ),
                         );
@@ -124,7 +151,7 @@ class _LoginViewState extends State<LoginView> {
                                   context, Routes.forgotPasswordRoute
                               );
                             }, child: Text(
-                          AppStrings.forgetPassword,
+                          AppStrings.forgetPassword.tr(),
                           style: Theme
                               .of(context)
                               .textTheme
@@ -135,7 +162,7 @@ class _LoginViewState extends State<LoginView> {
                               Navigator.pushReplacementNamed(
                                   context, Routes.registerRoute);
                             }, child: Text(
-                          AppStrings.registerText,
+                          AppStrings.registerText.tr(),
                           style: Theme
                               .of(context)
                               .textTheme
@@ -148,7 +175,6 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
           ),
-        ),
     );
   }
 

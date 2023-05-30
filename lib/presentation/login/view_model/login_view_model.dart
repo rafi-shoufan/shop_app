@@ -1,14 +1,16 @@
 import 'dart:async';
-
 import 'package:advanced/domain/usecase/login_usecase.dart';
 import 'package:advanced/presentation/base/base_view_model.dart';
 import 'package:advanced/presentation/common/freezed.dart';
+import 'package:advanced/presentation/common/state_renderer/state_renderer_impl.dart';
+import '../../common/state_renderer/state_renderer.dart';
 
-class LoginViewModel extends BaseViewModel with ViewModelInputs , ViewModelOutputs{
+class LoginViewModel extends BaseViewModel with LoginViewModelInputs , LoginViewModelOutputs{
 
   /// broadcast مشان ينبه كل يلي عميسمعوا يتنبهوا موش بس واحد
   final StreamController _userNameStreamController = StreamController<String>.broadcast();
   final StreamController _passwordStreamController = StreamController<String>.broadcast();
+  final StreamController userIsLoggedInStreamController = StreamController<bool>();
   final StreamController _allInputsAreValidStreamController = StreamController<void>.broadcast();
 
   var loginObject = LoginObject('','');
@@ -18,14 +20,17 @@ class LoginViewModel extends BaseViewModel with ViewModelInputs , ViewModelOutpu
   /// inputs
   @override
   void start() {
-    // TODO: implement start
+    /// view model should tell view please show content state
+    inputState.add(ContentState());
   }
 
   @override
   void dispose() {
+    super.dispose();
     _userNameStreamController.close();
     _passwordStreamController.close();
     _allInputsAreValidStreamController.close();
+    userIsLoggedInStreamController.close();
   }
 
   @override
@@ -56,31 +61,36 @@ class LoginViewModel extends BaseViewModel with ViewModelInputs , ViewModelOutpu
 
   @override
   login() async {
-    (await _loginUseCase.execute(LoginUseCaseInput(loginObject.userName, loginObject.password))).fold(
+    inputState.add(LoadingState(stateRendererType: StateRendererType.popupLoadingState));
+    (
+        await _loginUseCase.execute(LoginUseCaseInput(loginObject.userName, loginObject.password))
+    ).fold(
             (l) => {
+              inputState.add(ErrorState(stateRendererType: StateRendererType.popupErrorStateRenderer, message: l.message)),
               print(l.message)
             },
             (r) => {
-              print(r.customer!.name)
+              /// content
+              inputState.add(ContentState()),
+              print(r.customer!.name),
+              /// navigate to main screen
+              userIsLoggedInStreamController.add(true)
             }
     );
   }
 
   /// outputs
   @override
-  // TODO: implement outIsPasswordValid
   Stream<bool> get outIsPasswordValid => _passwordStreamController.stream.map((password) => _isPasswordValid(password));
 
   @override
-  // TODO: implement outIsUserNameValid
   Stream<bool> get outIsUserNameValid => _userNameStreamController.stream.map((userName) => _isUserNameValid(userName));
 
   @override
-  // TODO: implement outAllInputsAreValid
-  Stream<bool> get outAllInputsAreValid => _allInputsAreValidStreamController.stream.map((event) => _allInputsAreValid());
+  Stream<bool> get outAllInputsAreValid => _allInputsAreValidStreamController.stream.map((event) =>  _allInputsAreValid());
 
   bool _isUserNameValid(String userName){
-    return userName.isNotEmpty;
+    return userName.length >=8;
   }
 
   bool _isPasswordValid(String password){
@@ -90,12 +100,10 @@ class LoginViewModel extends BaseViewModel with ViewModelInputs , ViewModelOutpu
   bool _allInputsAreValid(){
     return _isUserNameValid(loginObject.userName) && _isPasswordValid(loginObject.password) ;
   }
-
-
 }
 
 
-abstract class ViewModelInputs{
+abstract class LoginViewModelInputs{
 
   setUserName(String userName);
   setPassword(String password);
@@ -106,7 +114,7 @@ abstract class ViewModelInputs{
 
 }
 
-abstract class ViewModelOutputs{
+abstract class LoginViewModelOutputs{
 
   Stream<bool> get outIsUserNameValid;
   Stream<bool> get outIsPasswordValid;

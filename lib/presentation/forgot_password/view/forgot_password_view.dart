@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../common/state_renderer/state_renderer_impl.dart';
+import '../../resources/color_manager.dart';
+
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({Key? key}) : super(key: key);
 
@@ -10,8 +13,9 @@ class ForgotPasswordView extends StatefulWidget {
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
 
     );
+
   }
 }

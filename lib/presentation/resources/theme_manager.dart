@@ -37,7 +37,7 @@ import 'font_manager.dart';
       buttonTheme: ButtonThemeData(
         buttonColor: ColorManager.primary,
         disabledColor: ColorManager.grey,
-        shape: StadiumBorder(),
+        shape: const StadiumBorder(),
         splashColor: ColorManager.lightPrimary
       ),
       /// elevated button theme
@@ -68,11 +68,23 @@ import 'font_manager.dart';
             color: ColorManager.primary,
             fontSize: FontSize.s16
         ),
+        titleSmall: getRegularTextStyle(
+            color: ColorManager.white,
+            fontSize: FontSize.s16
+        ),
+        labelSmall: getBoldTextStyle(
+            color: ColorManager.primary,
+            fontSize: FontSize.s12
+        ),
         bodyLarge: getRegularTextStyle(
             color: ColorManager.grey1,
         ),
         bodySmall: getRegularTextStyle(
             color: ColorManager.grey
+        ) ,
+        bodyMedium: getRegularTextStyle(
+            color: ColorManager.grey2,
+          fontSize: AppSize.s12
         ) ,
       ),
       /// input decoration theme
@@ -86,9 +98,10 @@ import 'font_manager.dart';
             color: ColorManager.grey,
             fontSize: FontSize.s14
         ),
-        errorStyle: getRegularTextStyle(color: ColorManager.error),
+        errorStyle: getRegularTextStyle(
+            color: ColorManager.error
+        ),
         contentPadding: const EdgeInsets.all(AppPadding.p8),
-
 
        // enabled border
         enabledBorder: OutlineInputBorder(
@@ -132,6 +145,5 @@ import 'font_manager.dart';
           borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
         ),
       ),
-
     );
   }

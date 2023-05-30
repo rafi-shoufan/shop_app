@@ -1,11 +1,12 @@
-import 'package:advanced/presentation/forgot_password/forgot_password_view.dart';
+import 'package:advanced/presentation/forgot_password/view/forgot_password_view.dart';
 import 'package:advanced/presentation/login/view/login_view.dart';
-import 'package:advanced/presentation/main/main_view.dart';
+import 'package:advanced/presentation/main/view/main_view.dart';
 import 'package:advanced/presentation/onboarding/view/onboarding_view.dart';
-import 'package:advanced/presentation/register/register_view.dart';
+import 'package:advanced/presentation/register/view/register_view.dart';
 import 'package:advanced/presentation/resources/strings_manager.dart';
 import 'package:advanced/presentation/splash/splash_view.dart';
 import 'package:advanced/presentation/store_details/store_details_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,50 +25,47 @@ class Routes {
 
 class RouteGenerator{
 
-  static Route<dynamic> getRoute(RouteSettings settings){
-
-    switch(settings.name){
+  static Route<dynamic> getRoute(RouteSettings settings) {
+    switch (settings.name) {
       case Routes.splashRoute :
         return MaterialPageRoute(builder: (context) => const SplashView(),);
-    }
-    switch(settings.name){
+
       case Routes.onBoarding :
         return MaterialPageRoute(builder: (context) => const OnBoardingView(),);
-    }
-    switch(settings.name){
+
       case Routes.loginRoute :
         initLoginModule();
         return MaterialPageRoute(builder: (context) => const LoginView(),);
-    }
-    switch(settings.name){
-      case Routes.registerRoute :
-        return MaterialPageRoute(builder: (context) => const RegisterView(),);
-    }
-    switch(settings.name){
-      case Routes.forgotPasswordRoute :
-        return MaterialPageRoute(builder: (context) => const ForgotPasswordView(),);
-    }
-    switch(settings.name){
-      case Routes.mainRoute :
-        return MaterialPageRoute(builder: (context) => const MainView(),);
-    }
-    switch(settings.name){
-      case Routes.storeDetailsRoute :
-        return MaterialPageRoute(builder: (context) => const StoreDetailsView(),);
-    }
-    return unDefinedRoute();
-  }
 
+      case Routes.registerRoute :
+        initRegisterModule();
+        return MaterialPageRoute(builder: (context) => const RegisterView(),);
+
+      case Routes.forgotPasswordRoute :
+        return MaterialPageRoute(
+          builder: (context) => const ForgotPasswordView(),);
+
+      case Routes.mainRoute :
+        initHomeModule();
+        return MaterialPageRoute(builder: (context) => const MainView(),);
+
+      case Routes.storeDetailsRoute :
+        return MaterialPageRoute(
+          builder: (context) => const StoreDetailsView(),);
+      default:
+        return unDefinedRoute();
+    }
+  }
   static Route<dynamic> unDefinedRoute() {
 
     return MaterialPageRoute(builder: (context) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text(AppStrings.noRouteFound),
+          title:  Text(AppStrings.noRouteFound.tr()),
         ),
-        body: const Center(
+        body:  Center(
           child:  Text(
-              AppStrings.noRouteFound
+              AppStrings.noRouteFound.tr()
           ),
         ),
       );

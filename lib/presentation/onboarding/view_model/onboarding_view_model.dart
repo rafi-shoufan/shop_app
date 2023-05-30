@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:advanced/domain/models/models.dart';
 import 'package:advanced/presentation/base/base_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../resources/assets_manager.dart';
 import '../../resources/strings_manager.dart';
@@ -61,10 +62,10 @@ class OnBoardingViewModel extends BaseViewModel with OnBoardingViewModelInputs,O
 
 
   List<SliderObject> _getSliderData() => [
-    SliderObject(AppStrings.onBoardingTitle1, AppStrings.onBoardingSubtitle1, ImageAssets.onBoardingLogo1),
-    SliderObject(AppStrings.onBoardingTitle2, AppStrings.onBoardingSubtitle2, ImageAssets.onBoardingLogo2),
-    SliderObject(AppStrings.onBoardingTitle3, AppStrings.onBoardingSubtitle3, ImageAssets.onBoardingLogo3),
-    SliderObject(AppStrings.onBoardingTitle4, AppStrings.onBoardingSubtitle4, ImageAssets.onBoardingLogo4),
+    SliderObject(AppStrings.onBoardingTitle1.tr(), AppStrings.onBoardingSubtitle1.tr(), ImageAssets.onBoardingLogo1),
+    SliderObject(AppStrings.onBoardingTitle2.tr(), AppStrings.onBoardingSubtitle2.tr(), ImageAssets.onBoardingLogo2),
+    SliderObject(AppStrings.onBoardingTitle3.tr(), AppStrings.onBoardingSubtitle3.tr(), ImageAssets.onBoardingLogo3),
+    SliderObject(AppStrings.onBoardingTitle4.tr(), AppStrings.onBoardingSubtitle4.tr(), ImageAssets.onBoardingLogo4),
   ];
 
   void _postDataToView() {
@@ -84,7 +85,6 @@ abstract class OnBoardingViewModelInputs{
   int goPrevious();
   onPageChanged(int index);
   Sink get inputSliderViewObject;
-
 }
 
 

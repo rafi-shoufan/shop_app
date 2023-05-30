@@ -22,3 +22,4 @@ class LoginUseCaseInput {
   String password;
   LoginUseCaseInput(this.email,this.password);
 }
+

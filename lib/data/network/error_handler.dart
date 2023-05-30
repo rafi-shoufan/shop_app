@@ -1,6 +1,8 @@
 
  import 'package:advanced/data/network/failure.dart';
+import 'package:advanced/presentation/resources/strings_manager.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 enum DataSource{
    SUCCESS,
@@ -16,6 +18,7 @@ enum DataSource{
    SEND_TIMEOUT,
    CACHE_ERROR,
    NO_INTERNET_CONNECTION,
+   BAD_CERTIFICATE,
    DEFAULT,
  }
 
@@ -30,6 +33,7 @@ enum DataSource{
   static const int NOT_FOUND = 404; /// not found
 
   // local status code
+
   static const int CONNECTION_TIMEDOUT = -1;
   static const int CANCEL = -2;
   static const int RECIEVE_TIMEOUT = -3;
@@ -37,25 +41,27 @@ enum DataSource{
   static const int CACHE_ERROR = -5;
   static const int NO_INTERNET_CONNECTION = -6;
   static const int DEFAULT = -7;
+  static const int BAD_CERTIFICATE = -8;
  }
 
  class ResponseMessage{
-  static const String SUCCESS = 'success';
-  static const String NO_CONTENT = 'success';
-  static const String BAD_REQUEST = 'bad request, try again later';
-  static const String UNAUTHORIZED = 'user is unauthorized, try again later';
-  static const String FORBIDDEN = 'forbidden request, try again later';
-  static const String INTERNAL_SERVER_ERROR = 'something went wrong, try again later';
-  static const String NOT_FOUND = 'not found';
+  static const String SUCCESS = AppStrings.success;
+  static const String NO_CONTENT = AppStrings.success;
+  static const String BAD_REQUEST = AppStrings.badRequestError;
+  static const String UNAUTHORIZED = AppStrings.unauthorizedError;
+  static const String FORBIDDEN = AppStrings.forbiddenError;
+  static const String INTERNAL_SERVER_ERROR = AppStrings.internalServerError;
+  static const String NOT_FOUND = AppStrings.notFoundError;
 
 
-  static const String CONNECTION_TIMEDOUT = 'time out error, try again later';
-  static const String CANCEL = 'request was canceled, try again later';
-  static const String RECIEVE_TIMEOUT = 'time out error, try again later';
-  static const String SEND_TIMEOUT = 'time out error, try again later';
-  static const String CACHE_ERROR = 'cache error, try again later';
-  static const String NO_INTERNET_CONNECTION = 'please check your internet connection';
-  static const String DEFAULT = 'something went wrong, try again later';
+  static const String CONNECTION_TIMEDOUT = AppStrings.timeOutError;
+  static const String CANCEL = AppStrings.defaultError;
+  static const String RECIEVE_TIMEOUT = AppStrings.timeOutError;
+  static const String SEND_TIMEOUT = AppStrings.timeOutError;
+  static const String CACHE_ERROR = AppStrings.cacheError;
+  static const String NO_INTERNET_CONNECTION = AppStrings.noInternetError;
+  static const String BAD_CERTIFICATE = AppStrings.badCertificate;
+  static const String DEFAULT = AppStrings.defaultError;
  }
 
 
@@ -63,33 +69,37 @@ enum DataSource{
   Failure getFailure(){
     switch(this){
       case DataSource.SUCCESS:
-        return Failure(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        return Failure(ResponseCode.SUCCESS, ResponseMessage.SUCCESS.tr());
       case DataSource.NO_CONTENT:
-        return Failure(ResponseCode.NO_CONTENT, ResponseMessage.NO_CONTENT);
+        return Failure(ResponseCode.NO_CONTENT, ResponseMessage.NO_CONTENT.tr());
       case DataSource.BAD_REQUEST:
-        return Failure(ResponseCode.BAD_REQUEST, ResponseMessage.BAD_REQUEST);
+        return Failure(ResponseCode.BAD_REQUEST, ResponseMessage.BAD_REQUEST.tr());
       case DataSource.FORBIDDEN:
-        return Failure(ResponseCode.FORBIDDEN, ResponseMessage.FORBIDDEN);
+        return Failure(ResponseCode.FORBIDDEN, ResponseMessage.FORBIDDEN.tr());
       case DataSource.UNAUTHORIZED:
-        return Failure(ResponseCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+        return Failure(ResponseCode.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED.tr());
       case DataSource.NOT_FOUND:
-        return Failure(ResponseCode.NOT_FOUND, ResponseMessage.NOT_FOUND);
+        return Failure(ResponseCode.NOT_FOUND, ResponseMessage.NOT_FOUND.tr());
       case DataSource.INTERNAL_SERVER_ERROR:
-        return Failure(ResponseCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
+        return Failure(ResponseCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR.tr());
       case DataSource.CONNECTION_TIMEDOUT:
-        return Failure(ResponseCode.CONNECTION_TIMEDOUT, ResponseMessage.CONNECTION_TIMEDOUT);
+        return Failure(ResponseCode.CONNECTION_TIMEDOUT, ResponseMessage.CONNECTION_TIMEDOUT.tr());
       case DataSource.CANCEL:
-        return Failure(ResponseCode.CANCEL, ResponseMessage.CANCEL);
+        return Failure(ResponseCode.CANCEL, ResponseMessage.CANCEL.tr());
       case DataSource.RECIEVE_TIMEOUT:
-        return Failure(ResponseCode.RECIEVE_TIMEOUT, ResponseMessage.RECIEVE_TIMEOUT);
+        return Failure(ResponseCode.RECIEVE_TIMEOUT, ResponseMessage.RECIEVE_TIMEOUT.tr());
       case DataSource.SEND_TIMEOUT:
-        return Failure(ResponseCode.SEND_TIMEOUT, ResponseMessage.SEND_TIMEOUT);
+        return Failure(ResponseCode.SEND_TIMEOUT, ResponseMessage.SEND_TIMEOUT.tr());
       case DataSource.CACHE_ERROR:
-        return Failure(ResponseCode.CACHE_ERROR, ResponseMessage.CACHE_ERROR);
+        return Failure(ResponseCode.CACHE_ERROR, ResponseMessage.CACHE_ERROR.tr());
       case DataSource.NO_INTERNET_CONNECTION:
-        return Failure(ResponseCode.NO_INTERNET_CONNECTION, ResponseMessage.NO_INTERNET_CONNECTION);
+        print('get failure');
+        return Failure(ResponseCode.NO_INTERNET_CONNECTION, ResponseMessage.NO_INTERNET_CONNECTION.tr());
+      case DataSource.BAD_CERTIFICATE:
+        print('get failure');
+        return Failure(ResponseCode.BAD_CERTIFICATE, ResponseMessage.BAD_CERTIFICATE.tr());
       case DataSource.DEFAULT:
-        return Failure(ResponseCode.DEFAULT, ResponseMessage.DEFAULT);
+        return Failure(ResponseCode.DEFAULT, ResponseMessage.DEFAULT.tr());
     }
   }
  }
@@ -99,42 +109,44 @@ enum DataSource{
   late Failure failure;
   ErrorHandler.handle(dynamic error){
     if(error is DioError){
+      print("if(error is DioError)");
       failure = _handleError(error);
     }else{
+      print("error is not dio error");
       failure = DataSource.DEFAULT.getFailure();
     }
   }
 
   Failure _handleError(DioError error) {
 
+    print("first handle error");
     switch(error.type){
-
       case DioErrorType.connectionTimeout:
         return DataSource.CONNECTION_TIMEDOUT.getFailure();
       case DioErrorType.sendTimeout:
         return DataSource.SEND_TIMEOUT.getFailure();
       case DioErrorType.receiveTimeout:
         return DataSource.RECIEVE_TIMEOUT.getFailure();
-      // case DioErrorType.badCertificate:
-      //   return DataSource.RECIEVE_TIMEOUT.getFailure();
+      case DioErrorType.badCertificate:
+        return DataSource.BAD_CERTIFICATE.getFailure();
       case DioErrorType.badResponse:
         if(error.response != null && error.response?.statusMessage !=null && error.response?.statusCode!=null ){
+          print('if badResponse');
           return Failure(error.response?.statusCode??0, error.response?.statusMessage??'error');
         }else{
+          print('else badResponse');
           return DataSource.DEFAULT.getFailure();
         }
       case DioErrorType.cancel:
         return DataSource.CANCEL.getFailure();
       case DioErrorType.connectionError:
+        print('switch _handleError');
         return DataSource.NO_INTERNET_CONNECTION.getFailure();
-
       case DioErrorType.unknown:
+        print('unknownnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
         return DataSource.DEFAULT.getFailure();
-
       default : return DataSource.NO_INTERNET_CONNECTION.getFailure();
-
     }
-
     }
  }
 
